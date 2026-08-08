@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:gymdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+server:
+  servlet:
+    context-path: /api/v1
+
+jwt:
+  secret: test-secret-key-for-junit-tests-only-not-for-production-use-1234
+  access-token-expiry-ms: 900000
+
+rate:
+  limit:
+    login-per-minute: 1000
