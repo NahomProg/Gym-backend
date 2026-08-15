@@ -24,8 +24,8 @@ public class MembershipService {
     private final MembershipPlanRepository membershipPlanRepository;
 
     public MembershipService(MembershipRepository membershipRepository,
-                              MemberRepository memberRepository,
-                              MembershipPlanRepository membershipPlanRepository) {
+                             MemberRepository memberRepository,
+                             MembershipPlanRepository membershipPlanRepository) {
         this.membershipRepository = membershipRepository;
         this.memberRepository = memberRepository;
         this.membershipPlanRepository = membershipPlanRepository;
@@ -35,6 +35,10 @@ public class MembershipService {
     public MembershipResponse assignMembership(AssignMembershipRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> GymApiException.memberNotFound(request.getMemberId()));
+
+        if (member.getStatus() != Status.MemberStatus.ACTIVE) {
+            throw GymApiException.memberNotActive(request.getMemberId());
+        }
 
         MembershipPlan plan = membershipPlanRepository.findById(request.getPlanId())
                 .orElseThrow(() -> GymApiException.membershipPlanNotFound(request.getPlanId()));

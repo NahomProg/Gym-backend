@@ -5,7 +5,7 @@ import org.example.gymbackend.dto.request.LoginRequest;
 import org.example.gymbackend.dto.request.RegisterRequest;
 import org.example.gymbackend.dto.response.AuthResponse;
 import org.example.gymbackend.service.AuthService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

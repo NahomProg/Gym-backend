@@ -14,6 +14,7 @@ import org.example.gymbackend.repository.ClassSessionRepository;
 import org.example.gymbackend.repository.MemberRepository;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -72,23 +73,80 @@ public class ClassSessionService {
             throw GymApiException.alreadyEnrolled(member.getId(), session.getId());
         }
 
-        if (session.getCurrentEnrollment() >= session.getMaxCapacity()) {
-            throw GymApiException.classFull(session.getId());
-        }
+        boolean isFull = session.getCurrentEnrollment() >= session.getMaxCapacity();
 
         ClassEnrollment enrollment = ClassEnrollment.builder()
                 .member(member)
                 .classSession(session)
-                .waitlisted(false)
+                .waitlisted(isFull)
                 .status(Status.EnrollmentStatus.ACTIVE)
                 .build();
 
         classEnrollmentRepository.save(enrollment);
 
-        session.setCurrentEnrollment(session.getCurrentEnrollment() + 1);
+        if (!isFull) {
+            session.setCurrentEnrollment(session.getCurrentEnrollment() + 1);
+            classSessionRepository.save(session);
+            return EnrollmentResponse.fromEntity(enrollment);
+        }
+
+        long waitlistPosition = classEnrollmentRepository
+                .findByClassSessionIdAndWaitlistedTrueAndStatusOrderByCreatedAtAsc(
+                        session.getId(), Status.EnrollmentStatus.ACTIVE)
+                .size();
+
+        return EnrollmentResponse.fromEntity(enrollment, (int) waitlistPosition);
+    }
+
+    @Transactional
+    public EnrollmentResponse cancelEnrollment(String classSessionId, String memberId) {
+        ClassSession session = classSessionRepository.findById(classSessionId)
+                .orElseThrow(() -> GymApiException.classSessionNotFound(classSessionId));
+
+        ClassEnrollment enrollment = classEnrollmentRepository
+                .findByMemberIdAndClassSessionIdAndStatus(memberId, classSessionId, Status.EnrollmentStatus.ACTIVE)
+                .orElseThrow(() -> GymApiException.enrollmentNotFound(memberId, classSessionId));
+
+        boolean wasWaitlisted = enrollment.isWaitlisted();
+        enrollment.setStatus(Status.EnrollmentStatus.CANCELLED);
+        classEnrollmentRepository.save(enrollment);
+
+        if (wasWaitlisted) {
+            return EnrollmentResponse.fromEntity(enrollment);
+        }
+
+        session.setCurrentEnrollment(session.getCurrentEnrollment() - 1);
         classSessionRepository.save(session);
 
+        classEnrollmentRepository
+                .findFirstByClassSessionIdAndWaitlistedTrueAndStatusOrderByCreatedAtAsc(
+                        classSessionId, Status.EnrollmentStatus.ACTIVE)
+                .ifPresent(promoted -> {
+                    promoted.setWaitlisted(false);
+                    promoted.setWaitlistPromotedAt(LocalDateTime.now());
+                    classEnrollmentRepository.save(promoted);
+
+                    session.setCurrentEnrollment(session.getCurrentEnrollment() + 1);
+                    classSessionRepository.save(session);
+                });
+
         return EnrollmentResponse.fromEntity(enrollment);
+    }
+
+    public List<EnrollmentResponse> getWaitlist(String classSessionId) {
+        if (!classSessionRepository.existsById(classSessionId)) {
+            throw GymApiException.classSessionNotFound(classSessionId);
+        }
+
+        List<ClassEnrollment> waitlist = classEnrollmentRepository
+                .findByClassSessionIdAndWaitlistedTrueAndStatusOrderByCreatedAtAsc(
+                        classSessionId, Status.EnrollmentStatus.ACTIVE);
+
+        List<EnrollmentResponse> result = new ArrayList<>();
+        for (int i = 0; i < waitlist.size(); i++) {
+            result.add(EnrollmentResponse.fromEntity(waitlist.get(i), i + 1));
+        }
+        return result;
     }
 
     public List<EnrollmentResponse> getEnrollmentsForClass(String classSessionId) {

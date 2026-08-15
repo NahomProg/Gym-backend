@@ -15,10 +15,15 @@ public class EnrollmentResponse {
     private String classSessionId;
     private String className;
     private boolean waitlisted;
+    private Integer waitlistPosition;
     private Status.EnrollmentStatus status;
     private LocalDateTime createdAt;
 
     public static EnrollmentResponse fromEntity(ClassEnrollment enrollment) {
+        return fromEntity(enrollment, null);
+    }
+
+    public static EnrollmentResponse fromEntity(ClassEnrollment enrollment, Integer waitlistPosition) {
         return new EnrollmentResponse(
                 enrollment.getId(),
                 enrollment.getMember().getId(),
@@ -26,6 +31,7 @@ public class EnrollmentResponse {
                 enrollment.getClassSession().getId(),
                 enrollment.getClassSession().getClassName(),
                 enrollment.isWaitlisted(),
+                waitlistPosition,
                 enrollment.getStatus(),
                 enrollment.getCreatedAt()
         );

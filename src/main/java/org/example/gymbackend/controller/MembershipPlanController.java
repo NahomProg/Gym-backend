@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import org.example.gymbackend.dto.request.CreateMembershipPlanRequest;
 import org.example.gymbackend.dto.response.MembershipPlanResponse;
 import org.example.gymbackend.service.MembershipPlanService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +21,7 @@ public class MembershipPlanController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MembershipPlanResponse> createPlan(@Valid @RequestBody CreateMembershipPlanRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(membershipPlanService.createPlan(request));
     }

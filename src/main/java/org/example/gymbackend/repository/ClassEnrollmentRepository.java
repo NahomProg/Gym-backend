@@ -14,4 +14,8 @@ public interface ClassEnrollmentRepository extends JpaRepository<ClassEnrollment
     List<ClassEnrollment> findByClassSessionIdAndStatus(String classSessionId, EnrollmentStatus status);
     boolean existsByMemberIdAndClassSessionIdAndStatus(String memberId, String classSessionId, EnrollmentStatus status);
     long countByClassSessionIdAndStatus(String classSessionId, EnrollmentStatus status);
+
+    Optional<ClassEnrollment> findByMemberIdAndClassSessionIdAndStatus(String memberId, String classSessionId, EnrollmentStatus status);
+    List<ClassEnrollment> findByClassSessionIdAndWaitlistedTrueAndStatusOrderByCreatedAtAsc(String classSessionId, EnrollmentStatus status);
+    Optional<ClassEnrollment> findFirstByClassSessionIdAndWaitlistedTrueAndStatusOrderByCreatedAtAsc(String classSessionId, EnrollmentStatus status);
 }

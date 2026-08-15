@@ -39,6 +39,10 @@ public class GymApiException extends RuntimeException {
         return new GymApiException("A member with this phone number already exists: " + phoneNumber, HttpStatus.CONFLICT);
     }
 
+    public static GymApiException memberNotActive(String id) {
+        return new GymApiException("Member is not active (suspended or inactive members cannot be assigned a new membership): " + id, HttpStatus.CONFLICT);
+    }
+
     public static GymApiException membershipPlanNotFound(String id) {
         return new GymApiException("Membership plan not found: " + id, HttpStatus.NOT_FOUND);
     }
@@ -54,16 +58,35 @@ public class GymApiException extends RuntimeException {
     public static GymApiException equipmentNotFound(String id) {
         return new GymApiException("Equipment not found: " + id, HttpStatus.NOT_FOUND);
     }
+
+    public static GymApiException equipmentAlreadyUnderMaintenance(String id) {
+        return new GymApiException("Equipment is already under maintenance: " + id, HttpStatus.CONFLICT);
+    }
+
+    public static GymApiException maintenanceRecordNotFound(String recordId) {
+        return new GymApiException("Maintenance record not found: " + recordId, HttpStatus.NOT_FOUND);
+    }
+
+    public static GymApiException maintenanceAlreadyResolved(String recordId) {
+        return new GymApiException("Maintenance record is already resolved: " + recordId, HttpStatus.CONFLICT);
+    }
+
+    public static GymApiException statusChangeRequiresMaintenanceWorkflow(String id) {
+        return new GymApiException(
+                "Use the maintenance start/resolve endpoints to move equipment " + id + " into or out of UNDER_MAINTENANCE",
+                HttpStatus.CONFLICT);
+    }
+
     public static GymApiException classSessionNotFound(String id) {
         return new GymApiException("Class session not found: " + id, HttpStatus.NOT_FOUND);
     }
 
-    public static GymApiException classFull(String id) {
-        return new GymApiException("Class session is at full capacity: " + id, HttpStatus.CONFLICT);
-    }
-
     public static GymApiException alreadyEnrolled(String memberId, String classSessionId) {
         return new GymApiException("Member " + memberId + " is already enrolled in class " + classSessionId, HttpStatus.CONFLICT);
+    }
+
+    public static GymApiException enrollmentNotFound(String memberId, String classSessionId) {
+        return new GymApiException("No active enrollment found for member " + memberId + " in class " + classSessionId, HttpStatus.NOT_FOUND);
     }
 
     public static GymApiException noActiveMembership(String memberId) {
