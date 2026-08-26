@@ -79,8 +79,6 @@ class EndToEndFlowTest {
     @Test
     @Order(3)
     void plainMemberCannotCreateMember() throws Exception {
-        // Proves per-method role security actually blocks a MEMBER-role account,
-        // not just that ADMIN/TRAINER happens to work.
         mockMvc.perform(post("/members")
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
@@ -98,10 +96,6 @@ class EndToEndFlowTest {
     @Test
     @Order(4)
     void elevateUserToAdmin() {
-        // Test-only privilege escalation via direct repository access - there is
-        // no production endpoint that grants ADMIN, by design. Role is looked up
-        // fresh from the DB on every request (JWT only carries the email), so the
-        // existing jwtToken keeps working after this without needing to re-login.
         User user = userRepository.findByEmail("test1@gmail.com").orElseThrow();
         Role adminRole = roleRepository.findByName("ADMIN").orElseThrow();
         user.setRole(adminRole);
