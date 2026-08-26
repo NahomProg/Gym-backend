@@ -14,7 +14,6 @@ public class CreateClassSessionRequest {
 
     @NotNull(message = "startTime is required")
     private LocalDateTime startTime;
-
     @NotNull(message = "endTime is required")
     private LocalDateTime endTime;
 
@@ -22,3 +21,5 @@ public class CreateClassSessionRequest {
     @Min(value = 1, message = "maxCapacity must be at least 1")
     private Integer maxCapacity;
 }
+
+//json proporty

@@ -1,9 +1,7 @@
 package org.example.gymbackend.dto.response;
 
 import lombok.*;
-import org.example.gymbackend.entity.EquipmentMaintenanceRecord;
-
-import java.time.LocalDateTime;
+import java.time.*;
 
 @Data
 @NoArgsConstructor
@@ -17,17 +15,4 @@ public class EquipmentMaintenanceResponse {
     private LocalDateTime resolvedAt;
     private String notes;
     private boolean open;
-
-    public static EquipmentMaintenanceResponse fromEntity(EquipmentMaintenanceRecord record) {
-        return new EquipmentMaintenanceResponse(
-                record.getId(),
-                record.getEquipment().getId(),
-                record.getEquipment().getName(),
-                record.getReason(),
-                record.getReportedAt(),
-                record.getResolvedAt(),
-                record.getNotes(),
-                record.getResolvedAt() == null
-        );
-    }
 }

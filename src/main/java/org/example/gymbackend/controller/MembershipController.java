@@ -6,6 +6,7 @@ import org.example.gymbackend.dto.response.MembershipResponse;
 import org.example.gymbackend.service.MembershipService;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.*;
 
 @RestController
@@ -19,6 +20,7 @@ public class MembershipController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'TRAINER')")
     public ResponseEntity<MembershipResponse> assignMembership(@Valid @RequestBody AssignMembershipRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(membershipService.assignMembership(request));
     }

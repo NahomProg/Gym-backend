@@ -3,9 +3,9 @@ package org.example.gymbackend.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
+import jakarta.annotation.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -13,15 +13,27 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
+    private static final int MINIMUM_SECRET_BYTES_FOR_HS256 = 32;
+
     @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Value("${jwt.access-token-expiry-ms}")
     private long expiryMs;
 
+    @PostConstruct
+    void validateConfiguration() {
+        if (jwtSecret == null || jwtSecret.getBytes(StandardCharsets.UTF_8).length < MINIMUM_SECRET_BYTES_FOR_HS256) {
+            throw new IllegalStateException("JWT_SECRET must contain at least 32 UTF-8 bytes for HS256");
+        }
+
+        if (expiryMs <= 0) {
+            throw new IllegalStateException("JWT_ACCESS_TOKEN_EXPIRY_MS must be greater than zero");
+        }
+    }
+
     private SecretKey getSigningKey() {
-        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String email) {
@@ -32,7 +44,7 @@ public class JwtTokenProvider {
                 .subject(email)
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(getSigningKey())
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
 

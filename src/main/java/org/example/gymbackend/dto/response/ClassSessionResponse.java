@@ -1,7 +1,6 @@
 package org.example.gymbackend.dto.response;
 
 import lombok.*;
-import org.example.gymbackend.entity.ClassSession;
 import org.example.gymbackend.entity.Status;
 import java.time.*;
 
@@ -17,17 +16,4 @@ public class ClassSessionResponse {
     private Integer maxCapacity;
     private Integer currentEnrollment;
     private Status.ClassStatus status;
-
-    public static ClassSessionResponse fromEntity(ClassSession session) {
-        return new ClassSessionResponse(
-                session.getId(),
-                session.getClassName(),
-                session.getClassDescription(),
-                session.getStartTime(),
-                session.getEndTime(),
-                session.getMaxCapacity(),
-                session.getCurrentEnrollment(),
-                session.getStatus()
-        );
-    }
 }
