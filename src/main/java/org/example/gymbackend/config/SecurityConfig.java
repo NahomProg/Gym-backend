@@ -1,5 +1,7 @@
 package org.example.gymbackend.config;
 
+import org.example.gymbackend.security.filter.JwtAuthenticationFilter;
+import org.example.gymbackend.security.filter.RateLimitingFilter;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
