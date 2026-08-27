@@ -10,6 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      SERVER_PORT: ${{ vars.SERVER_PORT }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
