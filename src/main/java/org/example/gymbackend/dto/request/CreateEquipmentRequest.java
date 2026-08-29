@@ -1,5 +1,7 @@
 package org.example.gymbackend.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -12,5 +14,6 @@ public class CreateEquipmentRequest {
     private String name;
 
     /** Optional - defaults to now if not provided. */
+    @JsonProperty("purchase_date")
     private LocalDateTime purchaseDate;
 }

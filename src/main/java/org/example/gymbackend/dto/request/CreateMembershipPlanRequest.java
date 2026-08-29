@@ -1,5 +1,7 @@
 package org.example.gymbackend.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -15,6 +17,7 @@ public class CreateMembershipPlanRequest {
 
     @NotNull(message = "durationDays is required")
     @Positive(message = "durationDays must be positive")
+    @JsonProperty("duration_days")
     private Integer durationDays;
 
     @NotNull(message = "price is required")

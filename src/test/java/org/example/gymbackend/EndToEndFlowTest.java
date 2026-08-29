@@ -84,10 +84,10 @@ class EndToEndFlowTest {
                         .contentType("application/json")
                         .content("""
                             {
-                              "firstName": "Should",
-                              "lastName": "Fail",
+                              "first_name": "Should",
+                              "last_name": "Fail",
                               "email": "should.fail@email.com",
-                              "phoneNumber": "0000000000"
+                              "phone_number": "0000000000"
                             }
                         """))
                 .andExpect(status().isForbidden());
@@ -110,10 +110,10 @@ class EndToEndFlowTest {
                         .contentType("application/json")
                         .content("""
                             {
-                              "firstName": "Test",
-                              "lastName": "Member",
+                              "first_name": "Test",
+                              "last_name": "Member",
                               "email": "test.member@email.com",
-                              "phoneNumber": "1234567890"
+                              "phone_number": "1234567890"
                             }
                         """))
                 .andExpect(status().isCreated())
@@ -132,10 +132,10 @@ class EndToEndFlowTest {
                         .contentType("application/json")
                         .content("""
                             {
-                              "firstName": "Second",
-                              "lastName": "Member",
+                              "first_name": "Second",
+                              "last_name": "Member",
                               "email": "test.member2@email.com",
-                              "phoneNumber": "1234567891"
+                              "phone_number": "1234567891"
                             }
                         """))
                 .andExpect(status().isCreated())
@@ -155,7 +155,7 @@ class EndToEndFlowTest {
                         .content("""
                             {
                               "name": "Monthly Plan",
-                              "durationDays": 30,
+                              "duration_days": 30,
                               "price": 1000
                             }
                         """))
@@ -175,8 +175,8 @@ class EndToEndFlowTest {
                         .contentType("application/json")
                         .content("""
                             {
-                              "memberId": "%s",
-                              "planId": "%s"
+                              "member_id": "%s",
+                              "plan_id": "%s"
                             }
                         """.formatted(memberId, planId)))
                 .andExpect(status().isCreated())
@@ -190,11 +190,11 @@ class EndToEndFlowTest {
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content("""
-                            { "memberId": "%s" }
+                            { "member_id": "%s" }
                         """.formatted(memberId)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.checkInTime").exists())
-                .andExpect(jsonPath("$.checkOutTime").doesNotExist());
+                .andExpect(jsonPath("$.check_in_time").exists())
+                .andExpect(jsonPath("$.check_out_time").doesNotExist());
     }
 
     @Test
@@ -204,7 +204,7 @@ class EndToEndFlowTest {
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content("""
-                            { "memberId": "%s" }
+                            { "member_id": "%s" }
                         """.formatted(memberId)))
                 .andExpect(status().isConflict());
     }
@@ -215,8 +215,8 @@ class EndToEndFlowTest {
         mockMvc.perform(post("/attendance/check-out/" + memberId)
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.checkOutTime").exists())
-                .andExpect(jsonPath("$.durationMinutes").exists());
+                .andExpect(jsonPath("$.check_out_time").exists())
+                .andExpect(jsonPath("$.duration_minutes").exists());
     }
 
     @Test
@@ -227,14 +227,14 @@ class EndToEndFlowTest {
                         .contentType("application/json")
                         .content("""
                             {
-                              "className": "Swimming",
-                              "startTime": "2026-09-01T09:00:00",
-                              "endTime": "2026-09-01T10:00:00",
-                              "maxCapacity": 5
+                              "class_name": "Swimming",
+                              "start_time": "2026-09-01T09:00:00",
+                              "end_time": "2026-09-01T10:00:00",
+                              "max_capacity": 5
                             }
                         """))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.currentEnrollment").value(0))
+                .andExpect(jsonPath("$.current_enrollment").value(0))
                 .andReturn().getResponse().getContentAsString();
 
         JsonNode json = objectMapper.readTree(response);
@@ -248,7 +248,7 @@ class EndToEndFlowTest {
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content("""
-                            { "memberId": "%s" }
+                            { "member_id": "%s" }
                         """.formatted(memberId)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("ACTIVE"))
@@ -262,7 +262,7 @@ class EndToEndFlowTest {
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content("""
-                            { "memberId": "%s" }
+                            { "member_id": "%s" }
                         """.formatted(memberId)))
                 .andExpect(status().isConflict());
     }
@@ -275,14 +275,14 @@ class EndToEndFlowTest {
                         .contentType("application/json")
                         .content("""
                             {
-                              "className": "Spin",
-                              "startTime": "2026-09-02T09:00:00",
-                              "endTime": "2026-09-02T10:00:00",
-                              "maxCapacity": 1
+                              "class_name": "Spin",
+                              "start_time": "2026-09-02T09:00:00",
+                              "end_time": "2026-09-02T10:00:00",
+                              "max_capacity": 1
                             }
                         """))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.maxCapacity").value(1))
+                .andExpect(jsonPath("$.max_capacity").value(1))
                 .andReturn().getResponse().getContentAsString();
 
         JsonNode json = objectMapper.readTree(response);
@@ -296,7 +296,7 @@ class EndToEndFlowTest {
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content("""
-                            { "memberId": "%s" }
+                            { "member_id": "%s" }
                         """.formatted(memberId)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.waitlisted").value(false));
@@ -309,11 +309,11 @@ class EndToEndFlowTest {
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content("""
-                            { "memberId": "%s" }
+                            { "member_id": "%s" }
                         """.formatted(member2Id)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.waitlisted").value(true))
-                .andExpect(jsonPath("$.waitlistPosition").value(1));
+                .andExpect(jsonPath("$.waitlist_position").value(1));
     }
 
     @Test
@@ -323,8 +323,8 @@ class EndToEndFlowTest {
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].memberId").value(member2Id))
-                .andExpect(jsonPath("$[0].waitlistPosition").value(1));
+                .andExpect(jsonPath("$[0].member_id").value(member2Id))
+                .andExpect(jsonPath("$[0].waitlist_position").value(1));
     }
 
     @Test
@@ -338,7 +338,7 @@ class EndToEndFlowTest {
         mockMvc.perform(get("/classes/" + waitlistClassId)
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.currentEnrollment").value(1));
+                .andExpect(jsonPath("$.current_enrollment").value(1));
 
         mockMvc.perform(get("/classes/" + waitlistClassId + "/waitlist")
                         .header("Authorization", "Bearer " + jwtToken))
@@ -348,7 +348,7 @@ class EndToEndFlowTest {
         mockMvc.perform(get("/classes/" + waitlistClassId + "/enrollments")
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[?(@.memberId == '" + member2Id + "')].waitlisted").value(false));
+                .andExpect(jsonPath("$[?(@.member_id == '" + member2Id + "')].waitlisted").value(false));
     }
 
     @Test
@@ -360,7 +360,7 @@ class EndToEndFlowTest {
                         .content("""
                             {
                               "name": "Treadmill #1",
-                              "purchaseDate": "2025-01-15T00:00:00"
+                              "purchase_date": "2025-01-15T00:00:00"
                             }
                         """))
                 .andExpect(status().isCreated())
@@ -396,7 +396,7 @@ class EndToEndFlowTest {
                         """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.open").value(true))
-                .andExpect(jsonPath("$.resolvedAt").doesNotExist())
+                .andExpect(jsonPath("$.resolved_at").doesNotExist())
                 .andReturn().getResponse().getContentAsString();
 
         JsonNode json = objectMapper.readTree(response);
@@ -443,7 +443,7 @@ class EndToEndFlowTest {
                         """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.open").value(false))
-                .andExpect(jsonPath("$.resolvedAt").exists());
+                .andExpect(jsonPath("$.resolved_at").exists());
 
         mockMvc.perform(get("/equipment/" + equipmentId)
                         .header("Authorization", "Bearer " + jwtToken))
