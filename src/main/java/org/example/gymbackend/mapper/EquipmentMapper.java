@@ -1,7 +1,11 @@
 package org.example.gymbackend.mapper;
 
-import org.example.gymbackend.entity.Equipment;
 import org.example.gymbackend.dto.response.EquipmentResponse;
+import org.example.gymbackend.entity.Equipment;
+import org.mapstruct.*;
 
-public interface EquipmentMapper extends EntityMapper<Equipment, EquipmentResponse> {
+@Mapper(componentModel = "spring")
+public interface EquipmentMapper {
+
+    EquipmentResponse toResponse(Equipment entity);
 }
